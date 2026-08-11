@@ -1,3 +1,4 @@
+using System;
 using Core.Scripts;
 using UnityEngine;
 
@@ -5,6 +6,7 @@ namespace Core.Scripts
 {
     public class GameFlowManager : IGameFlowManager
     {
+        public event Action<GameState> OnGameStateChange;
         public GameState CurrentState { get; private set; }
 
         public GameFlowManager()
@@ -14,22 +16,33 @@ namespace Core.Scripts
         }
         public GameState NextState(TransitionType transitionType)
         {
-            if(CurrentState == GameState.Title && transitionType == TransitionType.Enter)
+            if (CurrentState == GameState.Title)
             {
-                return GameState.InGame;
+                if(transitionType == TransitionType.Enter)
+                {
+                    return CurrentState = GameState.Play;
+                }
+                else if (transitionType == TransitionType.Exit)
+                {
+                    return CurrentState;
+                }
             }
-            else if(CurrentState == GameState.InGame && transitionType == TransitionType.Exit)
+            else if (CurrentState == GameState.Play)
             {
-                return GameState.EndGame;
+                if (transitionType == TransitionType.Enter)
+                {
+                    return CurrentState = GameState.Play;
+                }
+                else if (transitionType == TransitionType.Exit)
+                {
+                    return CurrentState =  GameState.Title;
+                }
             }
-            else if(CurrentState == GameState.EndGame && transitionType == TransitionType.Exit)
+            else if (CurrentState == GameState.Result)
             {
-                return GameState.Title;
+                return CurrentState = GameState.Title;
             }
-            else
-            {
-                return CurrentState;
-            }
+            return CurrentState;
         } 
     }
 }

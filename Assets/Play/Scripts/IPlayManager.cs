@@ -1,4 +1,5 @@
 ﻿using System;
+using Core.Scripts;
 
 namespace Play.Scripts
 {
@@ -11,6 +12,8 @@ namespace Play.Scripts
     public interface IPlayManager
     {
         public event Action<PlayState>  OnPlayStateChange;
-        public PlayState PlayState { get; }
+        public PlayState CurrentPlayState { get; }
+
+        public PlayState NextState(TransitionType transitionType);
     }
 }

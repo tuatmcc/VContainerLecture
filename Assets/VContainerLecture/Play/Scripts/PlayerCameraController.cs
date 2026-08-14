@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 using VContainer;
 
 namespace VContainerLecture.Play.Scripts
@@ -10,8 +11,11 @@ namespace VContainerLecture.Play.Scripts
         [SerializeField] private Transform followTarget;
 
         private IPlayerInput _playerInput;
+        private PlaySettings _playSettings;
         private float _yaw;
         private float _pitch;
+        private float _currentDistance;
+        private float _distanceVelocity;
 
         public Vector3 Forward 
         {
@@ -33,20 +37,53 @@ namespace VContainerLecture.Play.Scripts
             }
         }
         [Inject]
-        public void Construct(IPlayerInput playerInputs)
+        public void Construct(IPlayerInput playerInputs, PlaySettings playSettings)
         {
             _playerInput = playerInputs;
+            _playSettings = playSettings;
+        }
+
+        private void Start()
+        {
+            _currentDistance = _playSettings.DefaultDistance;
         }
 
         private void LateUpdate()
         {
             var look = _playerInput.Look;
-            _yaw += look.x * 0.1f;
-            _pitch += look.y * 0.1f;
-            _pitch = Mathf.Clamp(_pitch, -90, 90);
-            cameraRoot.rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+            _yaw += look.x * _playSettings.LookSensitivity;
+            _pitch += look.y * _playSettings.LookSensitivity;
+            _pitch = Mathf.Clamp(_pitch, _playSettings.MinPitch, _playSettings.MaxPitch);
+
+            var pivot = followTarget.position + Vector3.up * _playSettings.TargetHeight;
+            transform.position = pivot;
+            var rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+            cameraRoot.rotation = rotation;
             
-            transform.position = followTarget.position;
+            var desiredDirection = rotation * Vector3.back;
+            var desiredDistance = _playSettings.DefaultDistance;
+
+            if (Physics.SphereCast(
+                    pivot,
+                    _playSettings.CameraRadius,
+                    desiredDirection,
+                    out var hit,
+                    _playSettings.DefaultDistance,
+                    _playSettings.CollisionLayers,
+                    QueryTriggerInteraction.Ignore))
+            {
+                desiredDistance = Mathf.Clamp(hit.distance - _playSettings.CameraRadius, _playSettings.MinDistance,
+                    _playSettings.DefaultDistance);
+            }
+            
+            var smoothTime = desiredDistance < _currentDistance ? _playSettings.CollisionInSmooth : _playSettings.CollisionOutSmooth; 
+            _currentDistance = Mathf.SmoothDamp(
+                _currentDistance,
+                desiredDistance,
+                ref _distanceVelocity,
+                smoothTime);
+            cameraTransform.position = pivot + desiredDirection * _currentDistance;
+            cameraTransform.rotation = rotation;
         }
     }
 }

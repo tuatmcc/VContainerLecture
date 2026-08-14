@@ -9,8 +9,10 @@ namespace VContainerLecture.Play.Scripts
     public class PlayLifetimeScope : LifetimeScope
     {
         [SerializeField] private GameObject boxPrefab;
+        [SerializeField] private PlaySettings playSettings;
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterInstance(playSettings);
             builder.Register<PlayerInput>(Lifetime.Singleton)
                 .As<IPlayerInput>()
                 .As<ITickable>()

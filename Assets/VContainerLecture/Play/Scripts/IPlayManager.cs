@@ -1,7 +1,7 @@
 ﻿using System;
-using Core.Scripts;
+using VContainerLecture.Core.Scripts;
 
-namespace Play.Scripts
+namespace VContainerLecture.Play.Scripts
 {
     public enum PlayState
     {

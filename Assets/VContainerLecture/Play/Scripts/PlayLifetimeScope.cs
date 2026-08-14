@@ -4,7 +4,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Play.Scripts
+namespace VContainerLecture.Play.Scripts
 {
     public class PlayLifetimeScope : LifetimeScope
     {

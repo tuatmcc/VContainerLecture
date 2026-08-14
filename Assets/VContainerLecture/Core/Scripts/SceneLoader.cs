@@ -1,6 +1,6 @@
 ﻿using UnityEngine.SceneManagement;
 
-namespace Core.Scripts
+namespace VContainerLecture.Core.Scripts
 {
     public class SceneLoader : ISceneLoader
     {

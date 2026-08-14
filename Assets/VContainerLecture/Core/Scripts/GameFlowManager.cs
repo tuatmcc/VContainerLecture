@@ -1,8 +1,8 @@
 using System;
-using Core.Scripts;
+using VContainerLecture.Core.Scripts;
 using UnityEngine;
 
-namespace Core.Scripts
+namespace VContainerLecture.Core.Scripts
 {
     public class GameFlowManager : IGameFlowManager
     {

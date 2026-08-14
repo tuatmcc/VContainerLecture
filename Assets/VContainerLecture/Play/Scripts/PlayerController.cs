@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using VContainer;
 
-namespace Play.Scripts
+namespace VContainerLecture.Play.Scripts
 {
     public class PlayerController : MonoBehaviour
     {

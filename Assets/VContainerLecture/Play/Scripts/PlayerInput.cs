@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer.Unity;
 
-namespace Play.Scripts
+namespace VContainerLecture.Play.Scripts
 {
     public class PlayerInput : IPlayerInput, IDisposable, ITickable
     {

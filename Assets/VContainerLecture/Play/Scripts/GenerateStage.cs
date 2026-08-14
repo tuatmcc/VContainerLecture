@@ -2,7 +2,7 @@
 using R3;
 using VContainer;
 
-namespace Play.Scripts
+namespace VContainerLecture.Play.Scripts
 {
     public class GenerateStage : MonoBehaviour
     {

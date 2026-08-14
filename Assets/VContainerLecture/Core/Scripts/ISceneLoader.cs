@@ -1,4 +1,4 @@
-﻿namespace Core.Scripts
+﻿namespace VContainerLecture.Core.Scripts
 {
     public interface ISceneLoader
     {

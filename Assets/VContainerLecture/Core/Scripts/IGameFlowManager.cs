@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.Scripts
+namespace VContainerLecture.Core.Scripts
 {
     public enum GameState
     {

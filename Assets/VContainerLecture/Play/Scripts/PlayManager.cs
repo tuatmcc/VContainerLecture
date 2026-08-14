@@ -1,8 +1,8 @@
 ﻿using System;
-using Core.Scripts;
+using VContainerLecture.Core.Scripts;
 using VContainer.Unity;
 
-namespace Play.Scripts
+namespace VContainerLecture.Play.Scripts
 {
     public class PlayManager : IPlayManager, IStartable
     {

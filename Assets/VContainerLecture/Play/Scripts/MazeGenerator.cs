@@ -6,7 +6,7 @@ using UnityEngine;
 using System;
 using Random = System.Random;
 
-namespace Play.Scripts
+namespace VContainerLecture.Play.Scripts
 {
     public class MazeGenerator : IMazeGenerator
     {

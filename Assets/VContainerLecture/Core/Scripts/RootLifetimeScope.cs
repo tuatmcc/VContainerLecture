@@ -1,7 +1,7 @@
 ﻿using VContainer;
 using VContainer.Unity;
 
-namespace Core.Scripts
+namespace VContainerLecture.Core.Scripts
 {
     public class RootLifetimeScope : LifetimeScope
     {

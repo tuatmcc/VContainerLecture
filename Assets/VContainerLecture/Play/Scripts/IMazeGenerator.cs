@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-namespace Play.Scripts
+namespace VContainerLecture.Play.Scripts
 {
     public interface IMazeGenerator
     {

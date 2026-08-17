@@ -12,6 +12,8 @@ namespace VContainerLecture.Play.Scripts
         IPlayerCamera _playerCamera;
         PlaySettings  _playSettings;
 
+        private static readonly int SpeedHash = Animator.StringToHash("Speed");
+        
         // フィールドインジェクションでも可
         // [Inject]
         // private IPlayerInput _playerInput;
@@ -27,7 +29,8 @@ namespace VContainerLecture.Play.Scripts
         {
             _playerRigidbody = GetComponent<Rigidbody>();
             _playerAnimator = GetComponent<Animator>();
-            _playerCollider = GetComponent<CapsuleCollider>();    
+            _playerCollider = GetComponent<CapsuleCollider>();
+
         }
 
         private void FixedUpdate()
@@ -45,7 +48,10 @@ namespace VContainerLecture.Play.Scripts
 
             var moveDistance =  _playSettings.MoveSpeed * Time.fixedDeltaTime;
             var nextPosition = _playerRigidbody.position;
-            var skinWidth = 0.02f;
+            
+            
+            
+            // var skinWidth = 0.02f;
 
             if (moveDir.sqrMagnitude > 0.0001f)
             {
@@ -60,7 +66,7 @@ namespace VContainerLecture.Play.Scripts
                         QueryTriggerInteraction.Ignore
                     ))
                 {
-                    var moveToWall = Mathf.Max(hit.distance - skinWidth, 0.0f);
+                    var moveToWall = Mathf.Max(hit.distance - _playSettings.SkinWidth, 0.0f);
                     nextPosition += moveDir * moveToWall;
 
                     var remainingDistance = moveDistance - moveToWall;
@@ -83,7 +89,7 @@ namespace VContainerLecture.Play.Scripts
                                 QueryTriggerInteraction.Ignore
                             ))
                         {
-                            nextPosition += slideDir * Mathf.Max(slideHit.distance - skinWidth, 0.0f);
+                            nextPosition += slideDir * Mathf.Max(slideHit.distance - _playSettings.SkinWidth, 0.0f);
                         }
                         else
                         {
@@ -96,6 +102,11 @@ namespace VContainerLecture.Play.Scripts
                     nextPosition += moveDir * moveDistance;
                 }
             }
+            var actualMove = nextPosition - _playerRigidbody.position;
+            actualMove.y = 0.0f;
+            var actualSpeed = actualMove.magnitude/Time.fixedDeltaTime;
+            var speedRate = Mathf.Clamp01(actualSpeed/ _playSettings.MoveSpeed);
+            _playerAnimator.SetFloat(SpeedHash, speedRate, 0.1f, Time.fixedDeltaTime);
             
             _playerRigidbody.MovePosition(nextPosition);
 

@@ -15,12 +15,13 @@ MonoBehaviour:
   <LookSensitivity>k__BackingField: 0.1
   <MinPitch>k__BackingField: -35
   <MaxPitch>k__BackingField: 65
-  <TargetHeight>k__BackingField: 1.5
-  <DefaultDistance>k__BackingField: 5
+  <TargetHeight>k__BackingField: 0.5
+  <DefaultDistance>k__BackingField: 2
   <MinDistance>k__BackingField: 0.8
   <CameraRadius>k__BackingField: 0.25
   <CollisionInSmooth>k__BackingField: 0.03
   <CollisionOutSmooth>k__BackingField: 0.15
   <CollisionLayers>k__BackingField:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 128
+  <MoveSpeed>k__BackingField: 4

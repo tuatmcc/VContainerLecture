@@ -17,5 +17,6 @@ namespace VContainerLecture.Play.Scripts
         [field: SerializeField] public float CollisionInSmooth { get; private set; } = 0.03f;
         [field: SerializeField] public float CollisionOutSmooth { get; private set; } = 0.15f;
         [field: SerializeField] public LayerMask CollisionLayers { get; private set; }
+        [field: SerializeField] public float MoveSpeed { get; private set; } = 1.0f;
     }
 }

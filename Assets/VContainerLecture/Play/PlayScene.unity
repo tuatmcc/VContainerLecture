@@ -691,6 +691,63 @@ MonoBehaviour:
   mazeStartPos: {fileID: 481598234}
   mazeGoalPos: {fileID: 1749504827}
   Cube: {fileID: 7841317066834666207, guid: 8c77a31931e65db41a667048688b5557, type: 3}
+--- !u!1001 &1191918800
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2921955953255872360, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+      propertyPath: m_Name
+      value: Beacon
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
 --- !u!1 &1579277057
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,3 +896,4 @@ SceneRoots:
   - {fileID: 1106317599}
   - {fileID: 481598234}
   - {fileID: 1749504827}
+  - {fileID: 1191918800}

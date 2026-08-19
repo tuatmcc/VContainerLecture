@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using R3;
 using VContainer;
+using VContainerLecture.Core.Scripts;
 
 namespace VContainerLecture.Play.Scripts
 {
@@ -59,6 +60,8 @@ namespace VContainerLecture.Play.Scripts
                     }
                 }
             }
+
+            _playManager.NextState(TransitionType.Enter);
         }
 
         private Vector3 ToWorldPosition(Vector3 start, int directionX, int directionZ, int diffX, int diffZ)

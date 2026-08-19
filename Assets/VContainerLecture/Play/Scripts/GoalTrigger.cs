@@ -19,8 +19,7 @@ namespace VContainerLecture.Play.Scripts
             {
                 return;
             }
-            
-            
+            _playManager.CompletePlay();
         }
     }
 }

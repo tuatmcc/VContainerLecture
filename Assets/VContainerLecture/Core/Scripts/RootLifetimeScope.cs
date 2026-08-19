@@ -7,6 +7,7 @@ namespace VContainerLecture.Core.Scripts
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<SceneLoader>(Lifetime.Singleton).As<ISceneLoader>();
             builder.Register<GameFlowManager>(Lifetime.Singleton).As<IGameFlowManager>();
         }
     }

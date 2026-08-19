@@ -1,10 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
-using NUnit.Framework;
-using Unity.Mathematics;
 using UnityEngine;
-using System;
-using Random = System.Random;
 
 namespace VContainerLecture.Play.Scripts
 {

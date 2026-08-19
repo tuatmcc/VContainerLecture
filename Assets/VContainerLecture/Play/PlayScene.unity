@@ -622,6 +622,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 100096, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 100098, guid: 412b92d4feeb9c548bfa98f62c4d1022, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -1329,6 +1333,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   boxPrefab: {fileID: 7841317066834666207, guid: 8c77a31931e65db41a667048688b5557, type: 3}
   playSettings: {fileID: 11400000, guid: ad9c6cab9c8d8ff428e8ba219750b979, type: 2}
+  isTest: 1
 --- !u!4 &1106317599
 Transform:
   m_ObjectHideFlags: 0
@@ -1365,11 +1370,11 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1749504827}
     m_Modifications:
     - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1377,7 +1382,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1385,15 +1390,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1416,6 +1421,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+--- !u!4 &1191918804 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2578046739757346258, guid: 073056008054ab14bb2b338e23f0acdc, type: 3}
+  m_PrefabInstance: {fileID: 1191918800}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1579277057
 GameObject:
   m_ObjectHideFlags: 0
@@ -1473,6 +1483,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1749504827}
+  - component: {fileID: 1749504828}
+  - component: {fileID: 1749504829}
   m_Layer: 0
   m_Name: mazeGoal
   m_TagString: Untagged
@@ -1492,9 +1504,43 @@ Transform:
   m_LocalPosition: {x: 10, y: -0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1191918804}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1749504828
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749504826}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1.6, z: 1}
+  m_Center: {x: -2, y: 0.8, z: -2}
+--- !u!114 &1749504829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749504826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a0e3f3eb9e440e99217e0b17cdf7a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VContainerLecture.Play.Scripts.GoalTrigger
 --- !u!1001 &4397542532526117850
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1564,4 +1610,3 @@ SceneRoots:
   - {fileID: 1106317599}
   - {fileID: 481598234}
   - {fileID: 1749504827}
-  - {fileID: 1191918800}

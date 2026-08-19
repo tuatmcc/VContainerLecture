@@ -9,9 +9,11 @@ namespace VContainerLecture.Play.Scripts
         public event Action<PlayState> OnPlayStateChange; 
         
         public PlayState CurrentPlayState { get; private set; }
+        private readonly IGameFlowManager _gameFlowManager;
 
-        public PlayManager()
+        public PlayManager(IGameFlowManager gameFlowManager)
         {
+            _gameFlowManager = gameFlowManager;
             CurrentPlayState = PlayState.GenerateStage; 
         }
 
@@ -20,7 +22,8 @@ namespace VContainerLecture.Play.Scripts
             if(CurrentPlayState != PlayState.Playing)
                 return;
             
-            NextState(TransitionType.Enter); 
+            NextState(TransitionType.Enter);
+            _gameFlowManager.NextState(TransitionType.Exit);
         }
 
         public void Start()

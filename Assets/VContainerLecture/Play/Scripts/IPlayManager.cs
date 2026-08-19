@@ -13,6 +13,7 @@ namespace VContainerLecture.Play.Scripts
     {
         public event Action<PlayState>  OnPlayStateChange;
         public PlayState CurrentPlayState { get; }
+        public void CompletePlay();
 
         public PlayState NextState(TransitionType transitionType);
     }

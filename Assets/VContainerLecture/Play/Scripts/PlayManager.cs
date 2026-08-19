@@ -15,6 +15,14 @@ namespace VContainerLecture.Play.Scripts
             CurrentPlayState = PlayState.GenerateStage; 
         }
 
+        public void CompletePlay()
+        {
+            if(CurrentPlayState != PlayState.Playing)
+                return;
+            
+            NextState(TransitionType.Enter); 
+        }
+
         public void Start()
         {
             OnPlayStateChange?.Invoke(CurrentPlayState);

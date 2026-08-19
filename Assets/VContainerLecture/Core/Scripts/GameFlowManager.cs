@@ -1,7 +1,5 @@
 using System;
-using VContainerLecture.Core.Scripts;
-using UnityEngine;
-
+using UnityEngine.SceneManagement;
 namespace VContainerLecture.Core.Scripts
 {
     public class GameFlowManager : IGameFlowManager
@@ -9,40 +7,44 @@ namespace VContainerLecture.Core.Scripts
         public event Action<GameState> OnGameStateChange;
         public GameState CurrentState { get; private set; }
 
-        public GameFlowManager()
+        readonly ISceneLoader sceneLoader;
+
+        public GameFlowManager(ISceneLoader sceneLoader)
         {
-            CurrentState = new GameState();
-            CurrentState = GameState.Title;
+            this.sceneLoader = sceneLoader;
+            CurrentState = SceneManager.GetActiveScene().name switch
+            {
+                "PlayScene" => GameState.Play,
+                "ResultScene" => GameState.Result,
+                _ => GameState.Title,
+            };
         }
+
         public GameState NextState(TransitionType transitionType)
         {
-            if (CurrentState == GameState.Title)
+            var nextState = CurrentState;
+
+            if (CurrentState == GameState.Title && transitionType == TransitionType.Enter)
             {
-                if(transitionType == TransitionType.Enter)
-                {
-                    return CurrentState = GameState.Play;
-                }
-                else if (transitionType == TransitionType.Exit)
-                {
-                    return CurrentState;
-                }
+                nextState = GameState.Play;
             }
-            else if (CurrentState == GameState.Play)
+            else if (CurrentState == GameState.Play && transitionType == TransitionType.Exit)
             {
-                if (transitionType == TransitionType.Enter)
-                {
-                    return CurrentState = GameState.Play;
-                }
-                else if (transitionType == TransitionType.Exit)
-                {
-                    return CurrentState =  GameState.Title;
-                }
+                nextState = GameState.Result;
             }
-            else if (CurrentState == GameState.Result)
+            else if (CurrentState == GameState.Result && transitionType == TransitionType.Enter)
             {
-                return CurrentState = GameState.Title;
+                nextState = GameState.Title;
             }
+
+            if (nextState == CurrentState)
+                return CurrentState;
+
+            CurrentState = nextState;
+            OnGameStateChange?.Invoke(CurrentState);
+            sceneLoader.LoadScene(CurrentState);
+
             return CurrentState;
-        } 
+        }
     }
 }

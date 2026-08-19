@@ -1,0 +1,15 @@
+﻿- [x] RootLifetimeScope
+  - SceneLoaderをISceneLodearで登録
+  - GameFlowManagerにISceneLoaderをDI
+  - Title -> Play -> Result -> Titleシーン遷移を実装
+- [x] Title, ResultのLifetimeScopeの整備
+  - TitleLifetimeScope
+  - TitleManager
+  - ResultLifetimeScope
+  - ResultManager
+- [x] PlayManagerの状態遷移
+  - Goalの処理
+  - Maze生成時の状態遷移
+- [x] テスト用実装
+  - TestPlayManagerの実装
+  - isTest切り替え

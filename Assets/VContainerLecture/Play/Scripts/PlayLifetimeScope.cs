@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -10,6 +9,8 @@ namespace VContainerLecture.Play.Scripts
     {
         [SerializeField] private GameObject boxPrefab;
         [SerializeField] private PlaySettings playSettings;
+        [SerializeField] private bool isTest;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(playSettings);
@@ -19,13 +20,23 @@ namespace VContainerLecture.Play.Scripts
                 .As<IDisposable>();
             builder.Register<MazeGenerator>(Lifetime.Singleton)
                 .As<IMazeGenerator>();
-            builder.Register<PlayManager>(Lifetime.Singleton)
-                .As<IPlayManager>()
-                .As<IStartable>();
+            if (isTest)
+            {
+                builder.Register<TestPlayManager>(Lifetime.Singleton)
+                    .As<IPlayManager>()
+                    .As<IStartable>();
+            }
+            else
+            {
+                builder.Register<PlayManager>(Lifetime.Singleton)
+                    .As<IPlayManager>()
+                    .As<IStartable>();
+            }
             builder.RegisterComponentInHierarchy<PlayerCameraController>()
                 .As<IPlayerCamera>();
             builder.RegisterComponentInHierarchy<PlayerController>();
             builder.RegisterComponentInHierarchy<GenerateStage>();
+            builder.RegisterComponentInHierarchy<GoalTrigger>();
         }
     }
 }

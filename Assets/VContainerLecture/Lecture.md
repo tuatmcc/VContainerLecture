@@ -1,6 +1,6 @@
 ﻿# はじめに
 この講習会資料は以下を前提とします。
-- Unity 6000.3.21f1
+- Unity 6000.3.21f1のインストール
 - https://github.com/tuatmcc/VContainerLecture　のクローン
 
 また前提知識としてUnity, C#の基礎的な理解を想定しています。(Class, Method, SerializeField, FindObject)
@@ -8,16 +8,19 @@
 
 また、この資料は一からDIを意識した設計が行えるようになるというよりかは、DIが用いられている既存プロジェクトで、DIを意識して機能の追加が行えることを目標にします。
 
+
 # VContainerとは何か？
 依存性注入(Dependency Injection, 以下DIと表記)のためのライブラリです。
 詳しくは公式のページを参考にしてください
 https://vcontainer.hadashikick.jp/ja/
 
 Extenjectというライブラリもあります(去年はこれでした)がなぜ切り替えたかというと、半分くらいはノリです。
-速かったり、シンプルだったりはします。
+速かったり、シンプルだったりします。
 
 詳しい違いは
+
 https://vcontainer.hadashikick.jp/ja/comparing/comparing-to-zenject
+
 を見てください
 
 # 依存性注入とはなにか？
@@ -33,6 +36,7 @@ https://vcontainer.hadashikick.jp/ja/comparing/comparing-to-zenject
 
 ようになります。これだけ言っても何のことやらという話だと思うので実際にDIしてみましょう。
 
+[※蛇足]DIを用いた設計思想に依存性逆転とかがあります。興味のある人は調べてみても良いとは思いますが、依存方向の矢印の向きだったりそもそも逆の逆、順方向はどっちだとか頭がパンクするので軽く眺める程度にすることをおすすめします。
 # (Pure C#に)DIしてみる
 `Assets/VContainerLecture/Core/Scripts/GameFlowManager.cs`に`ISceneLoader`をDIしてみましょう！
 `GameFlowManager`はシーンを跨いだ状態の管理を担い、`SceneLoader`はシーンのロードを担います(SceneLoaderのインターフェイスがISceneLoaderです)。`ISceneLoader`をDIすることで`GameFlowManager`へ`ISceneLoader`が注入される訳です。
@@ -129,8 +133,34 @@ public void Construct(IPlayerInput playerInput)
 
 この時点で`PlayScene`を再生して無事に操作できれば成功です。
 
-Pure C#, MonoBehaviour以外にもSciptableObject(SO)とかあったりしますが、ここでは割愛します。
-実装例が見たい場合は `PlaySetting.cs`あたりを参考にしてみてください。
+# VContainerによるPure C#エントリの話
+`PlayLifetimeScope`をみると`PlayerInput`が次のように登録されています。
+```csharp
+builder.Register<PlayerInput>(Lifetime.Singleton)
+                .As<IPlayerInput>()
+                .As<ITickable>()
+                .As<IDisposable>();
+```
+`PlayerInput`は`IPlayerInput`に加えて`ITickable`と`IDisposable`を継承しているということになります。
+
+例えば`ITickable`は`Tick`関数をもち、これを継承した`PlayerInput`は`Tick`関数を実装します。
+このTick関数はMonoBehaviourでいうところの`Update`関数に(大体)対応します。
+つまり、非MonoBehaviourでありながらMonoBehaviourのようなエントリを持てるということです。
+(基本的にゲームロジックからはMonoBehaviourを排除したいという原則が根底にあります。このへんはMVP設計の話とかの話に繋がったりします)
+
+よく使う系の対応表を次にまとめておきます。
+
+| VContainer | Extenject | MonoBehaviour |
+| --- | --- | --- |
+| `IStartable.Start()` | `IInitializable.Initialize()` | `Start()` |
+| `ITickable.Tick()` | `ITickable.Tick()` | `Update()` |
+| `IFixedTickable.FixedTick()` | `IFixedTickable.FixedTick()` | `FixedUpdate()` |
+| `ILateTickable.LateTick()` | `ILateTickable.LateTick()` | `LateUpdate()` |
+| `IDisposable.Dispose()` | `IDisposable.Dispose()` | `OnDestroy()` |
+
+# ScriptableObject(SO)をDIしてみる
+[//]: # (Pure C#, MonoBehaviour以外にもSciptableObject&#40;SO&#41;とかあったりしますが、ここでは割愛します。)
+[//]: # (実装例が見たい場合は `PlaySetting.cs`あたりを参考にしてみてください。)
 
 # テスト用コードの切り替え
 先に`注入されるクラスを書く(実はインターフェイスは必須ではありません!!)`みたいなことを書きました。
@@ -171,6 +201,16 @@ protected override void Configure(IContainerBuilder builder)
 
 実際にチェックボックスをON/OFFして振る舞いが変わることを確認しましょう！
 
+# DIが壊れたとき
+実際の開発ではDIの破壊が偶によくあります。その復旧方法を学んで起きましょう。
+
+(UnityのエラーログをChatGPTに投げれば良いとか言ってはいけません！)
+
+# [演習]実際に自分でDIしてみよう
+なにか好きな機能を作成して実際にDIしてみましょう！
+学祭開発の予習だと思ってください。
+
+思いつく機能がなければステージに回転機能でもつけてみてください。MonoBehaviourへのDI, SOの注入とか復習できると思います。
 # APPENDIX
 
 Q＆A
@@ -179,7 +219,11 @@ Q＆A
 - 依存性逆転ってなに？
 
 # Reference
+この資料は去年(2025年度)のExtenject講習会資料を参考に作成されました。
+
 https://github.com/tuatmcc/ExtenjectLecture/tree/main
+
+VContainerの公式リファレンス
 
 https://vcontainer.hadashikick.jp/
 

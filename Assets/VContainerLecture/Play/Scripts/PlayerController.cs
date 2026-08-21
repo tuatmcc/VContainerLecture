@@ -17,7 +17,8 @@ namespace VContainerLecture.Play.Scripts
         // フィールドインジェクションでも可
         // [Inject]
         // private IPlayerInput _playerInput;
-        [Inject]
+        // TODO: VContainerからメソッドインジェクションされるようにする
+        // [Inject]
         public void Construct(IPlayerInput playerInput, IPlayerCamera playerCamera, PlaySettings  settings)
         {
             _playerInput = playerInput;

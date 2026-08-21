@@ -13,7 +13,8 @@ namespace VContainerLecture.Play.Scripts
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterInstance(playSettings);
-            builder.RegisterEntryPoint<PlayerInput>();
+            // TODO: PlayerInputをVContainerのEntryPointとして登録する
+            // builder.RegisterEntryPoint<PlayerInput>();
             builder.Register<MazeGenerator>(Lifetime.Singleton)
                 .As<IMazeGenerator>();
 
@@ -28,7 +29,8 @@ namespace VContainerLecture.Play.Scripts
 
             builder.RegisterComponentInHierarchy<PlayerCameraController>()
                 .As<IPlayerCamera>();
-            builder.RegisterComponentInHierarchy<PlayerController>();
+            // TODO: シーン上のPlayerControllerをコンテナへ登録する
+            // builder.RegisterComponentInHierarchy<PlayerController>();
             builder.RegisterComponentInHierarchy<GenerateStage>();
             builder.RegisterComponentInHierarchy<GoalTrigger>();
         }

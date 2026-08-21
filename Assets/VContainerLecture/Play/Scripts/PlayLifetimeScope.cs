@@ -12,7 +12,8 @@ namespace VContainerLecture.Play.Scripts
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterInstance(playSettings);
+            // TODO: Inspectorから設定したPlaySettingsを登録する
+            // builder.RegisterInstance(playSettings);
             builder.RegisterEntryPoint<PlayerInput>();
             builder.Register<MazeGenerator>(Lifetime.Singleton)
                 .As<IMazeGenerator>();

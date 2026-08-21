@@ -1332,7 +1332,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   boxPrefab: {fileID: 7841317066834666207, guid: 8c77a31931e65db41a667048688b5557, type: 3}
-  playSettings: {fileID: 11400000, guid: ad9c6cab9c8d8ff428e8ba219750b979, type: 2}
+  playSettings: {fileID: 0}
   isTest: 1
 --- !u!4 &1106317599
 Transform:

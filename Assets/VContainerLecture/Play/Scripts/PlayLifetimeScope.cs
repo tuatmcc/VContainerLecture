@@ -8,7 +8,6 @@ namespace VContainerLecture.Play.Scripts
     {
         [SerializeField] private GameObject boxPrefab;
         [SerializeField] private PlaySettings playSettings;
-        [SerializeField] private bool isTest;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -17,14 +16,8 @@ namespace VContainerLecture.Play.Scripts
             builder.Register<MazeGenerator>(Lifetime.Singleton)
                 .As<IMazeGenerator>();
 
-            if (isTest)
-            {
-                builder.RegisterEntryPoint<TestPlayManager>();
-            }
-            else
-            {
-                builder.RegisterEntryPoint<PlayManager>();
-            }
+            builder.RegisterEntryPoint<PlayManager>();
+            // TODO: isTestの値に応じてPlayManagerとTestPlayManagerを切り替えて登録する
 
             builder.RegisterComponentInHierarchy<PlayerCameraController>()
                 .As<IPlayerCamera>();

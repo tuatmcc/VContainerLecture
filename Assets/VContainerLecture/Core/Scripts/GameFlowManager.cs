@@ -11,7 +11,8 @@ namespace VContainerLecture.Core.Scripts
 
         public GameFlowManager(ISceneLoader sceneLoader)
         {
-            _sceneLoader = sceneLoader;
+            // TODO: 注入されたISceneLoaderをフィールドへ代入する
+            // _sceneLoader = sceneLoader;
             CurrentState = SceneManager.GetActiveScene().name switch
             {
                 "PlayScene" => GameState.Play,

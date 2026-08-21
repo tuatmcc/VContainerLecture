@@ -12,7 +12,7 @@ namespace VContainerLecture.Play.Scripts
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterInstance(playSettings);
+            // builder.RegisterInstance(playSettings);
             builder.RegisterEntryPoint<PlayerInput>();
             builder.Register<MazeGenerator>(Lifetime.Singleton)
                 .As<IMazeGenerator>();
@@ -26,8 +26,7 @@ namespace VContainerLecture.Play.Scripts
                 builder.RegisterEntryPoint<PlayManager>();
             }
 
-            builder.RegisterComponentInHierarchy<PlayerCameraController>()
-                .As<IPlayerCamera>();
+            builder.RegisterComponentInHierarchy<PlayerCameraController>();
             builder.RegisterComponentInHierarchy<PlayerController>();
             builder.RegisterComponentInHierarchy<GenerateStage>();
             builder.RegisterComponentInHierarchy<GoalTrigger>();

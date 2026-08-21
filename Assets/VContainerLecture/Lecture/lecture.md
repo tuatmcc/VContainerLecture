@@ -262,6 +262,14 @@ protected override void Configure(IContainerBuilder builder)
 
 (UnityのエラーログをChatGPTに投げれば良いとか言ってはいけません！)
 
+DI関連でエラーがでるなら大体次のような感じです
+1. LifetimeScopeに登録されていない
+2. `As<Interface>()`が注入する型と一致していない
+3. `RegisterComponentInHierarchy`ならHierarchyに存在するか確認する
+
+`lecture/di-broken`ブランチに移動してエラーを実際に修正してみましょう!
+
+
 # [演習]実際に自分でDIしてみよう
 なにか好きな機能を作成して実際にDIしてみましょう！
 学祭開発の予習だと思ってください。

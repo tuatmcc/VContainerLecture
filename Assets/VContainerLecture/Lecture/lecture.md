@@ -161,6 +161,62 @@ builder.Register<PlayerInput>(Lifetime.Singleton)
 # ScriptableObject(SO)をDIしてみる
 [//]: # (Pure C#, MonoBehaviour以外にもSciptableObject&#40;SO&#41;とかあったりしますが、ここでは割愛します。)
 [//]: # (実装例が見たい場合は `PlaySetting.cs`あたりを参考にしてみてください。)
+ゲームの設定値をまとめたScriptableObjectもDIできます！
+
+カメラ感度や移動速度をまとめた
+`Assets/VContainerLecture/Play/Scripts/PlaySettings.cs`
+を登録してみましょう。
+
+`PlaySettings.cs`は次のような感じです。
+```csharp
+
+using UnityEngine;
+
+namespace VContainerLecture.Play.Scripts
+{
+    [CreateAssetMenu(fileName = "PlaySettings", menuName = "Scriptable Objects/PlaySettings")]
+    public class PlaySettings : ScriptableObject
+    {
+        [field: SerializeField] public float LookSensitivity { get; private set; } = 0.1f;
+        [field: SerializeField] public float MinPitch { get; private set; } = -35f;
+        [field: SerializeField] public float MaxPitch { get; private set; } = 65f;
+        //...
+    }
+}
+```
+設定値はAssetとして保持できるためデバッグ用のパラメータも作っておいて切り替えられたりとかもでき便利です。
+
+まず、作成済みのPlaySetting.assetを`PlayLifetimeScope`のインスペクタへ登録します。
+(ちなみに、PlaySetting.csを右クリックして`Create`→`Scriptable Object`で`PlaySetting.asset`を作成できます)
+
+次に、インスタンスをVContainerに登録します。コメントアウトしてあるので解除してください。
+```csharp
+namespace VContainerLecture.Play.Scripts
+{
+    public class PlayLifetimeScope : LifetimeScope
+    {
+        [SerializeField] private PlaySettings playSettings;
+
+        protected override void Configure(IContainerBuilder builder)
+        {
+            builder.RegisterInstance(playSettings);
+        }
+    }
+}
+```
+
+`Register<T>`が`RegisterInstance`になっていることに注意すると良いかも。
+あとは通常のDIと同じように受け取れるはずです。(毎度恒例のコメントアウトをしてください)
+```csharp
+private PlaySettings _playSettings;
+
+[Inject]
+public void Construct(PlaySettings playSettings)
+{
+    _playSettings = playSettings;
+}
+```
+`PlaySettings.asset`の`Move Speed`とかを弄って実際に変化することを確かめてみるとDIされている実感がでると思います。
 
 # テスト用コードの切り替え
 先に`注入されるクラスを書く(実はインターフェイスは必須ではありません!!)`みたいなことを書きました。
@@ -214,9 +270,9 @@ protected override void Configure(IContainerBuilder builder)
 # APPENDIX
 
 Q＆A
-- SerializeFieldじゃ駄目なの？
-- FindObjectは駄目なの？
-- 依存性逆転ってなに？
+依存性逆転とは何かという話。ちょうざっくり
+
+![DIP]("./dip.png")
 
 # Reference
 この資料は去年(2025年度)のExtenject講習会資料を参考に作成されました。

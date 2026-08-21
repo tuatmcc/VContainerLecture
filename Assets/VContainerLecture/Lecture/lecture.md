@@ -84,7 +84,7 @@ Singletonはあまり気にしなくていいです。Extenjectでいうとこ�
 ```csharp
 public GameFlowManager(ISceneLoader sceneLoader)
 {
-    this.sceneLoader = sceneLoader;
+    _sceneLoader = sceneLoader;
     //以下、その他の初期化処理
 }
 ```
@@ -123,6 +123,7 @@ namespace VContainerLecture.Play.Scripts
 
 つまり次のような塩梅です。実際のコードは複数注入していますが、まぁ気にしないでください。
 ```csharp
+[Inject]
 public void Construct(IPlayerInput playerInput)
 {
     _playerInput = playerInput;
@@ -265,7 +266,7 @@ protected override void Configure(IContainerBuilder builder)
 DI関連でエラーがでるなら大体次のような感じです
 1. LifetimeScopeに登録されていない
 2. `As<Interface>()`が注入する型と一致していない
-3. `RegisterComponentInHierarchy`ならHierarchyに存在するか確認する
+3. `RegisterComponentInHierarchy`ならHierarchy上に存在していない
 
 `lecture/di-broken`ブランチに移動してエラーを実際に修正してみましょう!
 
@@ -275,12 +276,17 @@ DI関連でエラーがでるなら大体次のような感じです
 学祭開発の予習だと思ってください。
 
 思いつく機能がなければステージに回転機能でもつけてみてください。MonoBehaviourへのDI, SOの注入とか復習できると思います。
+- `IRotationService`, `RotationService`をPure C#で
+- `PlaySettings.cs`に`StageRotationSettings`を追加
+- `MonoBehaviour`の`StageRotatior.cs`
+
+みたいな？
 # APPENDIX
 
 Q＆A
 依存性逆転とは何かという話。ちょうざっくり
 
-![DIP]("./dip.png")
+![DIP](./dip.png)
 
 # Reference
 この資料は去年(2025年度)のExtenject講習会資料を参考に作成されました。

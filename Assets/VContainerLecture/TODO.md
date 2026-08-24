@@ -1,15 +1,20 @@
-﻿- [x] RootLifetimeScope
-  - SceneLoaderをISceneLodearで登録
-  - GameFlowManagerにISceneLoaderをDI
-  - Title -> Play -> Result -> Titleシーン遷移を実装
-- [x] Title, ResultのLifetimeScopeの整備
-  - TitleLifetimeScope
-  - TitleManager
-  - ResultLifetimeScope
-  - ResultManager
-- [x] PlayManagerの状態遷移
-  - Goalの処理
-  - Maze生成時の状態遷移
-- [x] テスト用実装
-  - TestPlayManagerの実装
-  - isTest切り替え
+- [x] Pure C#エントリポイントを`RegisterEntryPoint`で登録する
+  - `PlayerInput`
+  - `PlayManager` / `TestPlayManager`
+- [ ] 講義資料の誤り・表記揺れを修正する
+  - `[Inject]`を含むメソッドインジェクション例
+  - `.As<>()`の表記
+  - `PlaySettings`の名称
+  - DIP画像リンク
+- [ ] 各演習に使用ブランチと成功条件を記載する
+  - 対象シーン
+  - 操作方法
+  - 確認する挙動
+- [ ] LifetimeScopeと`RegisterEntryPoint`の説明を追加する
+- [x] 段階別ブランチを整備して`origin`へpushする
+  - `lecture/checkpoint-1`
+  - `lecture/checkpoint-2`
+  - `lecture/checkpoint-3`
+  - `lecture/checkpoint-4`
+  - `lecture/di-broken`
+- [x] 完成版と各教材ブランチを検証する

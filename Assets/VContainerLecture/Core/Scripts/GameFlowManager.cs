@@ -7,11 +7,11 @@ namespace VContainerLecture.Core.Scripts
         public event Action<GameState> OnGameStateChange;
         public GameState CurrentState { get; private set; }
 
-        readonly ISceneLoader sceneLoader;
+        private ISceneLoader _sceneLoader;
 
         public GameFlowManager(ISceneLoader sceneLoader)
         {
-            this.sceneLoader = sceneLoader;
+            _sceneLoader = sceneLoader;
             CurrentState = SceneManager.GetActiveScene().name switch
             {
                 "PlayScene" => GameState.Play,
@@ -42,7 +42,7 @@ namespace VContainerLecture.Core.Scripts
 
             CurrentState = nextState;
             OnGameStateChange?.Invoke(CurrentState);
-            sceneLoader.LoadScene(CurrentState);
+            _sceneLoader.LoadScene(CurrentState);
 
             return CurrentState;
         }

@@ -9,6 +9,31 @@
 
 また、この資料は一からDIを意識した設計が行えるようになるというよりかは、DIが用いられている既存プロジェクトで、DIを意識して機能の追加が行えることを目標にします。
 
+またフォルダ構成は次のようになってます。
+```
+Assets
+└── VContainerLecture
+    ├── Core : シーン間で共通
+    │   ├── Scripts : スクリプト
+    │   ├── RootLifetimeScope : RootLifetimeScopeがアタッチされたPrefab
+    │   └── VContainerSettings
+    ├── Lecture : 講習会資料
+    ├── Play : Playシーンに関するもの
+    │   ├── FBX : モデル
+    │   ├── Materials : マテリアル
+    │   ├── Prefabs : プレファブ
+    │   ├── Scripts : スクリプト
+    │   ├── Shaders : シェーダ
+    │   └── PlayScene : Playシーン
+    ├── Result
+    │   ├── Scripts
+    │   └── ResultScene
+    └── Title
+        ├── Scripts
+        │   ├── TitleLifetimeScope
+        │   └── TitleManager
+        └── TitleScene
+```
 
 # VContainerとは何か？
 依存性注入(Dependency Injection, 以下DIと表記)のためのライブラリです。
@@ -136,8 +161,12 @@ builder.Register<クラス名>(Lifetime.Singleton).as<インターフェイス1>
 このようにするということです。(インターフェイスは注入されるクラスが継承しているインターフェイスです)
 Singletonはあまり気にしなくていいです。Extenjectでいうところの`FromNew().AsSingle()`みたいなやつですね。
 
-3.インジェクトされてみましょう。MonoBehaviourを継承しないクラスは大体コンストラクタインジェクションを使えば良いと思います。つまりこういうことです。(コメントアウトされているだけなので解除しておいてください)
+3.インジェクトされてみましょう。MonoBehaviourを継承しないクラスは大体コンストラクタインジェクションを使えば良いと思います。つまりこういうことです。
+
+コメントアウトされているだけなので解除しておいてください
+
 ```csharp
+//GameFlowManager.cs
 public GameFlowManager(ISceneLoader sceneLoader)
 {
     _sceneLoader = sceneLoader;
@@ -146,15 +175,53 @@ public GameFlowManager(ISceneLoader sceneLoader)
 ```
 この例だと`ISceneLoader`を継承したクラス`SceneLoader`のインスタンスが引数`sceneLoader`として注入されています。
 
+TitleSceneを開いてシーン遷移ができれば、正常にDIできています。
+
 # (MonoBehaviourに)DIしてみる
 次はMonoBehaviourを継承したクラスにDIしてみましょう。
-`lecture/checkpoint-2`ブランチへ移動してください。
 
+`lecture/checkpoint-2`ブランチへ移動してください。
 `Assets/VContainerLecture/Play/Scripts/PlayerController.cs`へ、プレイヤーの入力を扱う`IPlayerInput`を注入します。
+```csharp
+public interface IPlayerInput
+{
+    Vector2 Move { get; }
+    Vector2 Look { get; }
+    bool JumpPressed { get; }
+}
+```
+```csharp
+public class PlayerInput : IPlayerInput, IDisposable, ITickable
+{
+    private readonly  GameInputs _gameinputs;
+
+    private bool jumpPressed;
+
+    //...
+    
+    public Vector2 Move => _gameinputs.Player.Move.ReadValue<Vector2>();
+    public Vector2 Look => _gameinputs.Player.Look.ReadValue<Vector2>();
+
+    public PlayerInput()
+    {
+        _gameinputs = new GameInputs();
+        _gameinputs.Player.Jump.performed += _ => jumpPressed = true;
+        _gameinputs.Player.Enable();
+    }
+
+    public void Tick()
+    {
+    }
+    public void Dispose()
+    {
+        _gameinputs.Player.Disable();
+    }
+}
+```
 
 先と同様にコード自体はすでに出来合いの物があるのでLifetimeScopeへ登録していきましょう。
 
-コメントアウトしてあると思うので解除しておいてください。
+`PlayLifetimeScope`にコメントアウトしてあると思うので解除しておいてください。
 
 ```csharp
 namespace VContainerLecture.Play.Scripts
@@ -182,6 +249,7 @@ namespace VContainerLecture.Play.Scripts
 
 つまり次のような塩梅です。実際のコードは複数注入していますが、まぁ気にしないでください。
 ```csharp
+// PlayerController.cs
 [Inject]
 public void Construct(IPlayerInput playerInput)
 {
@@ -189,12 +257,13 @@ public void Construct(IPlayerInput playerInput)
 }
 ```
 また、MonoBehaviourを継承したクラス(RegisterComponentInHierarchy)で注入されているクラスについては、スクリプトがアタッチされたゲームオブジェクトがシーン上に1つ存在している必要があります。
+
 というわけでHierarchyにいるunitychanにPlayerControllerをアタッチしてあげてください。
 
 この時点で`PlayScene`を再生して無事に操作できれば成功です。
 
 # VContainerによるPure C#エントリの話
-`PlayLifetimeScope`をみると`PlayerInput`が次のように登録されています。
+`PlayLifetimeScope`をみると`PlayerInput`を次のように登録します。
 ```csharp
 builder.Register<PlayerInput>(Lifetime.Singleton)
                 .As<IPlayerInput>()
@@ -218,10 +287,35 @@ builder.Register<PlayerInput>(Lifetime.Singleton)
 | `ILateTickable.LateTick()` | `ILateTickable.LateTick()` | `LateUpdate()` |
 | `IDisposable.Dispose()` | `IDisposable.Dispose()` | `OnDestroy()` |
 
+
+## ちょっとした余談(読まなくて良いです)
+実際はライフサイクルを持つようなクラスは`builder.Register<>(Lifetime.Singleton)`
+を使わずに`builder.RegisterEntryPoint<>()`を用いると公式Referenceにはあります。
+
+ではこの`builder.RegisterEntryPoint<>()`は何者かというと次のコードと等価(というより実装)なようです
+```csharp
+EntryPointsBuilder.EnsureDispatcherRegistered(builder);
+
+builder.Register<PlayerInput>(Lifetime.Singleton)
+    .AsImplementedInterfaces();
+```
+`.AsImplementedInterfaces()`は実装しているすべてのインターフェイスを追加しています。つまり`As<>()`をいちいち書かなくてよいということです。
+
+さらに`EntryPointsBuilder.EnsureDispatcherRegistered(builder)`は`IStartable`とかを橋渡ししてくれます。
+こんなコード入っていないと思った人は正しいです。
+
+本資料において`PlayLifetimeScope`にはすでに`RegisterEntryPoint`が存在します。
+実は`LifetimeScope`上で一回でも実行されていれば他のRegisterされたインスタンスにも適用されます。
+というわけで本講習ではわざわざ書かなくても動いたという話です。
+
+余談終わり！
+
 # ScriptableObject(SO)をDIしてみる
 [//]: # (Pure C#, MonoBehaviour以外にもSciptableObject&#40;SO&#41;とかあったりしますが、ここでは割愛します。)
 [//]: # (実装例が見たい場合は `PlaySetting.cs`あたりを参考にしてみてください。)
 ゲームの設定値をまとめたScriptableObjectもDIできます！
+
+`lecture/checkpoint-3`へ移動してください。
 
 カメラ感度や移動速度をまとめた
 `Assets/VContainerLecture/Play/Scripts/PlaySettings.cs`
@@ -229,7 +323,6 @@ builder.Register<PlayerInput>(Lifetime.Singleton)
 
 `PlaySettings.cs`は次のような感じです。
 ```csharp
-
 using UnityEngine;
 
 namespace VContainerLecture.Play.Scripts
@@ -251,6 +344,7 @@ namespace VContainerLecture.Play.Scripts
 
 次に、インスタンスをVContainerに登録します。コメントアウトしてあるので解除してください。
 ```csharp
+// PlayerCameraController.cs
 namespace VContainerLecture.Play.Scripts
 {
     public class PlayLifetimeScope : LifetimeScope
@@ -276,13 +370,16 @@ public void Construct(PlaySettings playSettings)
     _playSettings = playSettings;
 }
 ```
-`PlaySettings.asset`の`Move Speed`とかを弄って実際に変化することを確かめてみるとDIされている実感がでると思います。
+
+`PlayScene`に入って`PlaySettings.asset`の`Move Speed`とかを弄って実際に変化することを確かめてみるとDIされている実感がでると思います。
 
 # テスト用コードの切り替え
 先に`注入されるクラスを書く(実はインターフェイスは必須ではありません!!)`みたいなことを書きました。
 
 そもそもなんでインターフェイスを切り替えたかといえば、振る舞いの切り替えが容易になるからです。
 実際にテスト用コードに切り替えられるようにして、その嬉しさを実感してみましょう。
+
+`lecture/checkpoint-4`へ移動してください。
 
 `PlayManager`をデバッグ用の`TestPlayManager`へ切り替えられるようにします。
 この２つのクラスはどちらも共通のインターフェイス`IPlayManager`の実装です。
@@ -299,15 +396,11 @@ protected override void Configure(IContainerBuilder builder)
 {
     if (isTest)
     {
-        builder.Register<TestPlayManager>(Lifetime.Singleton)
-            .As<IPlayManager>()
-            .As<IStartable>();
+        builder.RegisterEntryPoint<TestPlayManager>();
     }
     else
     {
-        builder.Register<PlayManager>(Lifetime.Singleton)
-            .As<IPlayManager>()
-            .As<IStartable>();
+        builder.RegisterEntryPoint<PlayManager>();
     }
 }
 ```
@@ -316,6 +409,8 @@ protected override void Configure(IContainerBuilder builder)
 注入される側のコードを変更する必要はありません。
 
 実際にチェックボックスをON/OFFして振る舞いが変わることを確認しましょう！
+
+`isTest`がONだと`Console`にデバッグログが出力されるはずです。
 
 # DIが壊れたとき
 実際の開発ではDIの破壊が偶によくあります。その復旧方法を学んで起きましょう。
@@ -329,6 +424,7 @@ DI関連でエラーがでるなら大体次のような感じです
 
 `lecture/di-broken`ブランチに移動してエラーを実際に修正してみましょう!
 
+(Codexに適当にぶっ壊させたら悪辣な壊し方をしてきたので結構難易度高いと思います)
 
 # [演習]実際に自分でDIしてみよう
 なにか好きな機能を作成して実際にDIしてみましょう！
@@ -342,10 +438,21 @@ DI関連でエラーがでるなら大体次のような感じです
 みたいな？
 # APPENDIX
 
-Q＆A
-依存性逆転とは何かという話。ちょうざっくり
+# 依存性逆転とは何かという話。ちょうざっくり
 
 ![DIP](./dip.png)
+
+[学マスで理解する ver by 部長](https://qiita.com/Xia7an/items/f3ad29896bfb55e154b6)
+
+# Project Root LifetimeScopeに関するお話
+VContainerではExtenjectと同様にシーンをまたぐLifetimeScopeを定義できます。
+
+本講習においては実は`RootLifetimeScope`がそれです。
+またRoot LifetimeScopeはすべてのLifetimeScopeの親になります。
+
+具体的には`GameFlowManager`は`RootLifetimeScope`でのみ登録され、`TitleScene`から`PlayScene`とシーンが遷移しても同じインスタンでDIされます。
+
+これによって`RootScene`なんて使わなくてもシーン間の状態が保存できるので非常に便利です。
 
 # Reference
 この資料は去年(2025年度)のExtenject講習会資料を参考に作成されました。

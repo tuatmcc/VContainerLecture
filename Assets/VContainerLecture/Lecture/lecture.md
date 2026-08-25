@@ -2,6 +2,7 @@
 この講習会資料は以下を前提とします。
 - Unity 6000.3.21f1のインストール
 - https://github.com/tuatmcc/VContainerLecture　のクローン
+- Rider or VisualStudio等、エディタの導入(推奨)
 
 また前提知識としてUnity, C#の基礎的な理解を想定しています。(Class, Method, SerializeField, FindObject)
 講習会当日であればサポートがある(見込み)ですし、リポジトリごとChatGPTに投げて逐次聞きながら進めるのも良いでしょう
@@ -12,9 +13,11 @@
 # VContainerとは何か？
 依存性注入(Dependency Injection, 以下DIと表記)のためのライブラリです。
 詳しくは公式のページを参考にしてください
+
 https://vcontainer.hadashikick.jp/ja/
 
-Extenjectというライブラリもあります(去年はこれでした)がなぜ切り替えたかというと、半分くらいはノリです。
+Extenjectというライブラリもあります(去年はこれでした)。なぜ切り替えたかというと、半分くらいはノリです。
+
 速かったり、シンプルだったりします。
 
 詳しい違いは
@@ -26,7 +29,9 @@ https://vcontainer.hadashikick.jp/ja/comparing/comparing-to-zenject
 # 依存性注入とはなにか？
 
 ざっくり言えば、依存性注入とは
+
 **(何らかの形で結びつけられた)外部のオブジェクトを受け取る**
+
 テクニックです。
 
 これを上手いことゴニョゴニョすると
@@ -37,23 +42,74 @@ https://vcontainer.hadashikick.jp/ja/comparing/comparing-to-zenject
 ようになります。これだけ言っても何のことやらという話だと思うので実際にDIしてみましょう。
 
 [※蛇足]DIを用いた設計思想に依存性逆転とかがあります。興味のある人は調べてみても良いとは思いますが、依存方向の矢印の向きだったりそもそも逆の逆、順方向はどっちだとか頭がパンクするので軽く眺める程度にすることをおすすめします。
+
 # (Pure C#に)DIしてみる
-`Assets/VContainerLecture/Core/Scripts/GameFlowManager.cs`に`ISceneLoader`をDIしてみましょう！
-`GameFlowManager`はシーンを跨いだ状態の管理を担い、`SceneLoader`はシーンのロードを担います(SceneLoaderのインターフェイスがISceneLoaderです)。`ISceneLoader`をDIすることで`GameFlowManager`へ`ISceneLoader`が注入される訳です。
+
+`lecture/checkpoint-1`ブランチへ移動してください。
+
+`Assets/VContainerLecture/Core/Scripts/GameFlowManager.cs`に`SceneLoader`をDIしてみましょう！
+`GameFlowManager`はシーンを跨いだ状態の管理を担い、`SceneLoader`はシーンのロードを担います(SceneLoaderのインターフェイスがISceneLoaderです)。
+
+`ISceneLoader`をDIすることで`GameFlowManager`へ`SceneLoader`が注入される訳です。
 
 一般的なDIの手順は次のとおりです。
-1. 注入されるクラスを書く(実はインターフェイスは必須ではありません!!)
+1. 注入されるクラスを書く(インターフェイスは必須ではありません!!)
 2. LifetimeScopeに登録する
 3. 注入する
 
 3分◯ッキング的手法として1.の注入するコードは用意してあります。
 
 `GameFlowManager`, `IGameFlowManager`がそれです。
+それぞれ次のように記述されています。
+```csharp
+public enum GameState
+{
+    Title,
+    Play,
+    Result,
+}
+
+public enum TransitionType
+{
+    Enter,
+    Exit
+}
+public interface IGameFlowManager
+{
+    public event Action<GameState> OnGameStateChange;
+    public GameState CurrentState { get; }
+    GameState NextState(TransitionType  transitionType);
+} 
+```
+
+```csharp
+public class GameFlowManager : IGameFlowManager
+{
+    public event Action<GameState> OnGameStateChange;
+    public GameState CurrentState { get; private set; }
+
+    private ISceneLoader _sceneLoader;
+
+    public GameFlowManager(ISceneLoader sceneLoader)
+    {
+        _sceneLoader = sceneLoader;
+        CurrentState = SceneManager.GetActiveScene().name switch
+        {
+            "PlayScene" => GameState.Play,
+            "ResultScene" => GameState.Result,
+            _ => GameState.Title,
+        };
+    }
+    //以下略
+}
+```
 
 ただのピュア(MonoBehaviourを継承していない)なC#のコードです(ピュアなC#で書けるというのが偉大なことなんですよ！)
 
 次に`RootLifetimeScope`に登録していきましょう。
 (ZenjectでいうところのInstallerですね)
+
+一部コメントアウトされているのでこれを解除してください。
 
 ```csharp
 using VContainer;
@@ -92,11 +148,14 @@ public GameFlowManager(ISceneLoader sceneLoader)
 
 # (MonoBehaviourに)DIしてみる
 次はMonoBehaviourを継承したクラスにDIしてみましょう。
+`lecture/checkpoint-2`ブランチへ移動してください。
 
 `Assets/VContainerLecture/Play/Scripts/PlayerController.cs`へ、プレイヤーの入力を扱う`IPlayerInput`を注入します。
 
 先と同様にコード自体はすでに出来合いの物があるのでLifetimeScopeへ登録していきましょう。
-いつも通りコメントアウトしてあると思うので解除しておいてください。
+
+コメントアウトしてあると思うので解除しておいてください。
+
 ```csharp
 namespace VContainerLecture.Play.Scripts
 {

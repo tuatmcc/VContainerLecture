@@ -39,7 +39,7 @@ namespace VContainerLecture.Play.Scripts
         public void Construct(IPlayerInput playerInputs, PlaySettings playSettings)
         {
             _playerInput = playerInputs;
-            _playSettings = playSettings;
+            // _playSettings = playSettings;
         }
 
         private void Start()

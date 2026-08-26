@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -14,7 +15,10 @@ namespace VContainerLecture.Play.Scripts
         {
             builder.RegisterInstance(playSettings);
             // TODO: PlayerInputをVContainerのEntryPointとして登録する
-            // builder.RegisterEntryPoint<PlayerInput>();
+            // builder.Register<PlayerInput>(Lifetime.Singleton)
+            //     .As<IPlayerInput>()
+            //     .As<ITickable>()
+            //     .As<IDisposable>();
             builder.Register<MazeGenerator>(Lifetime.Singleton)
                 .As<IMazeGenerator>();
 

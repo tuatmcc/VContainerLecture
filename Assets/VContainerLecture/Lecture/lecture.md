@@ -64,7 +64,37 @@ https://vcontainer.hadashikick.jp/ja/comparing/comparing-to-zenject
 - モックと本番コードの切り替えが簡単にできる
 - MonoBehaviourの継承を減らせる
 
-ようになります。これだけ言っても何のことやらという話だと思うので実際にDIしてみましょう。
+DIを使わない場合、例えば`GameFlowManager`がシーン遷移のために`SceneLoader`を必要としているとします。
+```csharp
+public class GameFlowManager
+{
+    private SceneLoader _sceneLoader;
+
+    public GameFlowManager()
+    {
+        _sceneLoader = new SceneLoader();
+    }
+}
+```
+このコードでももちろん動きますが、GameFlowManagerはSceneLoaderを使うだけではなく、作成するまでを担ってしまっています。
+例えばあとから、SceneLoaderをテスト用のTestSceneLoaderに切り替えたくなったときGameFlowManagerを書き換える必要があります。
+
+そこで、依存するインスタンスを自分で作成することなく、外部から受け取るような概念を考えます。
+```csharp
+public class GameFlowManager
+{
+    private readonly ISceneLoader _sceneLoader;
+
+    public GameFlowManager(ISceneLoader sceneLoader)
+    {
+        _sceneLoader = sceneLoader;
+    }
+}
+```
+これがDIの基本的な概念です。でも一体どうやって`sceneLoader`を受け取るのでしょう？
+
+そうです。これを担うのがVContainerというわけです。
+では実際に、VContainerを使って実際にGameFlowManagerにSceneLoaderをDIしてみましょう！
 
 [※蛇足]DIを用いた設計思想に依存性逆転とかがあります。興味のある人は調べてみても良いとは思いますが、依存方向の矢印の向きだったりそもそも逆の逆、順方向はどっちだとか頭がパンクするので軽く眺める程度にすることをおすすめします。
 
@@ -156,11 +186,19 @@ namespace VContainerLecture.Core.Scripts
 
 素のC#であれば
 ```csharp
-builder.Register<クラス名>(Lifetime.Singleton).as<インターフェイス1>.as<インターフェイス2>
+builder.Register<クラス名>(Lifetime.Singleton).As<インターフェイス1>.As<インターフェイス2>
 ```
 このようにするということです。(インターフェイスは注入されるクラスが継承しているインターフェイスです)
-Singletonはあまり気にしなくていいです。Extenjectでいうところの`FromNew().AsSingle()`みたいなやつですね。
 
+`Lifetime.Singleton`はインスタンスのスコープです。
+VContainerでは登録したインスタンスをどの範囲で使い回すかをLifetimeで指定できます。
+- Singleton: シーン(異なるLifetimeScope)を跨いで同じインスタンを利用する
+- Scope: 同じシーン(同じLifetimeScope)内では使い回す
+- Transient: 注入のたびに新しく生成する
+
+とりあえず今はSingletonで同じインスタンスが入る、という理解で大丈夫です。
+
+3.さてインジェクトされてみましょう。MonoBehaviourを継承しないクラスは大体コンストラクタインジェクションを使えば良いと思います。つまりこういうことです。(コメントアウトされているだけなので解除しておいてください)
 3.インジェクトされてみましょう。MonoBehaviourを継承しないクラスは大体コンストラクタインジェクションを使えば良いと思います。つまりこういうことです。
 
 コメントアウトされているだけなので解除しておいてください
